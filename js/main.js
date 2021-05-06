@@ -17,10 +17,14 @@ const APP = {
             ev.preventDefault();
             let searchInput = document.getElementById('search');
             let keyword = searchInput.value.trim();
+            let key = keyword.toLowerCase();
             console.log(keyword);
             if (keyword) {
-            APP.fetchData(keyword)
-            }
+                APP.getDataFromIDB(APP.dbStore, key, ()=>{
+                    APP.buildList(APP.results);
+                  },
+                //   APP.fetchData(key))
+                  )}
      },
      fetchData: (keyword)=>{
         let url = APP.base_URL + APP.API_KEY + `&t=${keyword}`;
@@ -33,7 +37,6 @@ const APP = {
               }
         })
         .then(data=>{
-            console.log(data.length);
             APP.results = [];
             APP.results.push(data);
             APP.buildList(APP.results);
@@ -73,9 +76,30 @@ const APP = {
            console.log('Object already exists')
          }
      },
+     getDataFromIDB: (DBStore, key, cb) => {
+        let req = APP.db.transaction(DBStore, 'readonly')
+         .objectStore(DBStore)
+         .get(key);
+     
+       req.onsuccess = (ev) =>{
+         if(req.result) {
+             console.log(req.result);
+             APP.results = [];
+          APP.results.push(req.result['results']);
+           cb(APP.results);
+       } else {
+            APP.fetchData(key);
+       }
+       
+       req.onerror = (err) =>{
+         console.log('not found');
+         console.warn(err);
+       }
+       
+     }
+    },
      buildList: (movies) => {
         //build the list of cards inside the current page
-        console.log(`show ${movies.length} cards`);
         let container = document.querySelector('#results');
           if (movies.length > 0) {
             container.innerHTML = movies
