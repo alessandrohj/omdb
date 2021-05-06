@@ -12,6 +12,12 @@ const APP = {
     },
     addListeners () {
         document.getElementById('searchForm').addEventListener('submit', APP.search);
+        if(document.querySelector('.btn-floating')){
+            let addButton = document.querySelectorAll('.btn-floating');
+            addButton.forEach(button=>{
+              button.addEventListener('click', APP.select);
+            })
+        }
     },
     search: (ev) => {
             ev.preventDefault();
@@ -27,7 +33,7 @@ const APP = {
                   )}
      },
      fetchData: (keyword)=>{
-        let url = APP.base_URL + APP.API_KEY + `&t=${keyword}`;
+        let url = APP.base_URL + APP.API_KEY + `&s=${keyword}`;
         fetch(url)
         .then(response=>{
             if(response.ok) return response.json()
@@ -37,8 +43,7 @@ const APP = {
               }
         })
         .then(data=>{
-            APP.results = [];
-            APP.results.push(data);
+            APP.results = data.Search;
             APP.buildList(APP.results);
             let key = keyword.toLowerCase()
             APP.addDataToIDB(data, key, APP.dbStore)
@@ -83,9 +88,8 @@ const APP = {
      
        req.onsuccess = (ev) =>{
          if(req.result) {
-             console.log(req.result);
-             APP.results = [];
-          APP.results.push(req.result['results']);
+             console.log(req.result['results'].Search);
+             APP.results = req.result['results'].Search;
            cb(APP.results);
        } else {
             APP.fetchData(key);
@@ -108,25 +112,22 @@ const APP = {
                 if (obj.Poster != null) {
                   img = obj.Poster;
                 }
-                return ` <div class="row">
-                <div class="col s12 m6 l4">
-                  <div class="card">
+                return ` 
+                <div class="col s12 m6 l3">
+                  <div class="card hoverable movie" id='${obj.Title}'>
                     <div class="card-image">
-                      <img class="responsive-img" src=${img}>
+                      <img class="responsive-img" alt="movie poster" src=${img}>
                       <a class="btn-floating halfway-fab waves-effect waves-light red"><i class="material-icons">add</i></a>
                     </div>
                     <div class="card-content">
                     <h5>${obj.Title}</h5>
-                    <p>Released: ${obj.Released}</p>
-                    <p>Awards: ${obj.Awards}</p>
-                    <p>IMDB Rating: ${obj.imdbRating}/10</p>
-                      <p>Plot: ${obj.Plot}.</p>
+                    <p>Released: ${obj.Year}</p>
                     </div>
                   </div>
-                </div>
               </div>`;
               })
               .join('\n');
+              APP.addListeners();
           } else {
             //no cards
             container.innerHTML = `<div class="card hoverable">
@@ -135,7 +136,26 @@ const APP = {
               </div>
             </div>`;
           }
-      },
+    },
+    select: (ev)=>{
+        // console.log('selected', ev.target);
+        let movie = ev.target;
+        let selected = movie.closest('.movie').getAttribute('id');
+        console.log(selected)
+        const movieData = APP.results.find(element=> element = selected);
+        APP.addDataToIDB(movieData, selected, APP.dbStoreSelection);
+        let req = APP.db.transaction(APP.dbStoreSelection, 'readwrite')
+        .objectStore(APP.dbStoreSelection);
+
+        let countRequest = req.count();
+        countRequest.onsuccess = function() {
+            console.log(countRequest.result);
+            let moviesCounter = document.querySelector('#moviesCounter');
+            moviesCounter.textContent = countRequest.result;
+          }
+  
+    
+    }
 
 }
 

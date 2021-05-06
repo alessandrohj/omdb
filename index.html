@@ -10,6 +10,17 @@
     <title>Shopify Challenge</title>
 </head>
 <body>
+  <nav>
+    <div class="nav-wrapper">
+        <div class="left hide-on-med-and-down">
+          <a href="./"><h5>Shopify Challenge</h5></a>
+      </div>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a href="./">Home</a></li>
+        <li><a href="#">Movies <p id="moviesCounter"></p></a></li>
+      </ul>
+    </div>
+  </nav>
 <section id="header">
     <h1>Shopify Challenge</h1>
     <p>Please search for movies and select the ones you would like to nominate.</p>
@@ -28,8 +39,9 @@
             </div>
           </div>
     </section>
-    <section id="results">
-
+    <section id="showResults">
+      <div id="results" class="row">
+      </div>
     </section>
 </body>
 <script src="./js/main.js"></script>
