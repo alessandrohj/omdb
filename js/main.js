@@ -3,8 +3,12 @@ const APP = {
     API_KEY: '898dd5ab',
     results: null,
     dbVersion: 1,
+    db: null,
+    dbStore: 'movies',
+    dbStoreSelection: 'selected',
     init () {
         APP.addListeners();
+        APP.openDB();
     },
     addListeners () {
         document.getElementById('searchForm').addEventListener('submit', APP.search);
@@ -33,7 +37,41 @@ const APP = {
             APP.results = [];
             APP.results.push(data);
             APP.buildList(APP.results);
+            let key = keyword.toLowerCase()
+            APP.addDataToIDB(data, key, APP.dbStore)
         })
+     },
+     openDB: ()=>{
+        let req = window.indexedDB.open('shopify-challenge', APP.dbVersion);
+        req.addEventListener('success', (ev) => {
+        APP.db = ev.target.result;
+        console.log('DB opened and upgraded as needed.', APP.db);
+     },
+     req.addEventListener('upgradeneeded', (ev) => {
+        APP.db = ev.target.result;
+        let oldVersion = ev.oldVersion;
+        let newVersion = ev.newVersion || APP.db.version;
+        console.log(`Upgrading DB from version ${oldVersion} to version ${newVersion}`);
+        if (!APP.db.objectStoreNames.contains(APP.dbStore) || ! APP.db.objectStoreNames.contains(APP.dbStoreSelection)){
+           APP.db.createObjectStore(APP.dbStore);
+           APP.db.createObjectStore(APP.dbStoreSelection);
+        }
+        })
+)
+    },  
+     addDataToIDB: (payload, key, dbStore)=>{
+        let req = APP.db.transaction(dbStore, 'readwrite')
+        .objectStore(dbStore)
+        .put({results: payload, keyword: key}, key);
+       
+         req.onsuccess = (ev) =>{
+           console.log('Object added to store')
+         }
+       
+         req.onerror = (err) =>{
+           console.warn(err);
+           console.log('Object already exists')
+         }
      },
      buildList: (movies) => {
         //build the list of cards inside the current page
