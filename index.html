@@ -6,12 +6,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./css/main.css">
     <link rel="stylesheet" href="./css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <title>Shopify Challenge</title>
 </head>
 <body>
+<section id="header">
     <h1>Shopify Challenge</h1>
-    <section id="search">
-
+    <p>Please search for movies and select the ones you would like to nominate.</p>
+    <p>You should select 5 movies.</p>
+        <div class="container searchBar">
+            <div class="nav-wrapper z-depth-3 hoverable" id="searchBar">
+              <form name="searchForm" id="searchForm">
+                <div class="input-field">
+                  <input id="search" type="search" required />
+                  <label class="label-icon" for="search"
+                    ><i class="material-icons">search</i></label
+                  >
+                  <i class="material-icons" id="closeSearchBtn">close</i>
+                </div>
+              </form>
+            </div>
+          </div>
+    </section>
+    <section id="results">
 
     </section>
 </body>
