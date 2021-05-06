@@ -4,6 +4,7 @@ const APP = {
     results: null,
     dbVersion: 1,
     db: null,
+    counter: 0,
     dbStore: 'movies',
     dbStoreSelection: 'selected',
     init () {
@@ -54,6 +55,7 @@ const APP = {
         req.addEventListener('success', (ev) => {
         APP.db = ev.target.result;
         console.log('DB opened and upgraded as needed.', APP.db);
+        APP.showCounting();
      },
      req.addEventListener('upgradeneeded', (ev) => {
         APP.db = ev.target.result;
@@ -138,25 +140,23 @@ const APP = {
           }
     },
     select: (ev)=>{
-        // console.log('selected', ev.target);
         let movie = ev.target;
         let selected = movie.closest('.movie').getAttribute('id');
         console.log(selected)
         const movieData = APP.results.find(element=> element = selected);
         APP.addDataToIDB(movieData, selected, APP.dbStoreSelection);
-        let req = APP.db.transaction(APP.dbStoreSelection, 'readwrite')
-        .objectStore(APP.dbStoreSelection);
-
-        let countRequest = req.count();
-        countRequest.onsuccess = function() {
-            console.log(countRequest.result);
-            let moviesCounter = document.querySelector('#moviesCounter');
-            moviesCounter.textContent = countRequest.result;
-          }
-  
-    
+        APP.showCounting();
+    },
+    showCounting: ()=>{
+      let req = APP.db.transaction(APP.dbStoreSelection, 'readwrite')
+      .objectStore(APP.dbStoreSelection);
+      let countRequest = req.count();
+      countRequest.onsuccess = function() {
+          APP.counter = countRequest.result;
+           let moviesCounter = document.querySelector('#moviesCounter');
+          moviesCounter.textContent = APP.counter;
+        }
     }
-
 }
 
 document.addEventListener('DOMContentLoaded', APP.init);
