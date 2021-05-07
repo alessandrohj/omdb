@@ -19,6 +19,18 @@ const APP = {
               button.addEventListener('click', APP.select);
             })
         }
+        //navigation listeners
+        document.getElementById('searchForm').addEventListener('submit', APP.nav);
+        document.getElementById('goHome').addEventListener('click', APP.nav);
+        document.getElementById('goToSelection').addEventListener('click', APP.nav);
+        document.getElementById('nav-title').addEventListener('click', APP.nav);
+    },
+    nav: (ev) =>{
+        let btn = ev.target;
+        let target = btn.getAttribute("data-target");
+        console.log("Navigate to", target);
+        document.querySelector(".page.active").classList.remove("active");
+        document.getElementById(target).classList.add("active");
     },
     search: (ev) => {
             ev.preventDefault();
@@ -30,7 +42,6 @@ const APP = {
                 APP.getDataFromIDB(APP.dbStore, key, ()=>{
                     APP.buildList(APP.results);
                   },
-                //   APP.fetchData(key))
                   )}
      },
      fetchData: (keyword)=>{
@@ -104,9 +115,21 @@ const APP = {
        
      }
     },
+    removeDataFromIDB: (key, dbStore)=>{
+      let req = APP.db.transaction(dbStore, 'readwrite')
+      .objectStore(dbStore)
+      .delete(key);
+
+      req.onsuccess = ()=>{
+        console.log(`${req} deleted`);
+        APP.showCounting();
+      }
+
+    },
      buildList: (movies) => {
         //build the list of cards inside the current page
         let container = document.querySelector('#results');
+        container.innerHTML = '';
           if (movies.length > 0) {
             container.innerHTML = movies
               .map((obj) => {
@@ -119,7 +142,7 @@ const APP = {
                   <div class="card hoverable movie" id='${obj.Title}'>
                     <div class="card-image">
                       <img class="responsive-img" alt="movie poster" src=${img}>
-                      <a class="btn-floating halfway-fab waves-effect waves-light red"><i class="material-icons">add</i></a>
+                      <a class="btn-floating halfway-fab waves-effect waves-light red"><i class="material-icons" id="addButton">add</i></a>
                     </div>
                     <div class="card-content">
                     <h5>${obj.Title}</h5>
@@ -142,10 +165,13 @@ const APP = {
     select: (ev)=>{
         let movie = ev.target;
         let selected = movie.closest('.movie').getAttribute('id');
-        console.log(selected)
         const movieData = APP.results.find(element=> element = selected);
         APP.addDataToIDB(movieData, selected, APP.dbStoreSelection);
         APP.showCounting();
+    },
+    remove: (item) =>{
+      // movie.innerHTML = 'add';
+      // APP.removeDataFromIDB(item, APP.dbStoreSelection);
     },
     showCounting: ()=>{
       let req = APP.db.transaction(APP.dbStoreSelection, 'readwrite')

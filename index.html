@@ -13,35 +13,37 @@
   <nav>
     <div class="nav-wrapper">
         <div class="left">
-          <a href="./"><h5>Shopify Challenge</h5></a>
+          <span id="nav-title" data-target='home'>Shopify Challenge</span>
         </div>
       <ul id="nav-mobile" class="right">
-        <li><a href="./">Home</a></li>
-        <li><i class="material-icons">local_movies</i> <p id="moviesCounter"></p></li>
+        <li><span id="goHome" data-target='home'>Home</span></li>
+        <li><span id="goToSelection" data-target="selection">Movies<p id="moviesCounter"></p></span></li>
       </ul>
     </div>
   </nav>
-<section id="header">
+<section id="home"  class="page active" >
     <h1>Shopify Challenge</h1>
     <p>Please search for movies and select the ones you would like to nominate.</p>
     <p>You should select 5 movies.</p>
         <div class="container searchBar">
             <div class="nav-wrapper z-depth-3 hoverable" id="searchBar">
-              <form name="searchForm" id="searchForm">
+              <form name="searchForm" id="searchForm" data-target="showResults">
                 <div class="input-field">
                   <input id="search" type="search" required />
                   <label class="label-icon" for="search"
-                    ><i class="material-icons">search</i></label
-                  >
+                    ><i class="material-icons">search</i></label>
                   <i class="material-icons" id="closeSearchBtn">close</i>
                 </div>
               </form>
             </div>
           </div>
     </section>
-    <section id="showResults">
+    <section id="showResults" class="page">
       <div id="results" class="row">
       </div>
+    </section>
+    <section id="selection" class="page">
+      <h1>Test</h1>
     </section>
 </body>
 <script src="./js/main.js"></script>
