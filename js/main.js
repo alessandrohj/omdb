@@ -11,6 +11,7 @@ const APP = {
     init: () => {
         APP.addListeners();
         APP.openDB();
+        APP.worker();
     },
     addListeners () {
         document.getElementById('searchForm').addEventListener('submit', APP.search);
@@ -246,6 +247,7 @@ const APP = {
       });
       APP.selected = movieData;
       APP.removeDataFromIDB(clicked, APP.dbStoreSelection);
+      APP.buildSelectionList(APP.selected);
   },
     showCounting: ()=>{
       let req = APP.db.transaction(APP.dbStoreSelection, 'readwrite')
@@ -259,7 +261,26 @@ const APP = {
           }
     
         }
-    }
+    },
+  worker: ()=>{
+    if('serviceWorker' in navigator){
+      window.addEventListener("load", function() {
+      navigator.serviceWorker
+      .register('./ServiceWorker.js', {
+          scope: './',
+      })
+      .then( (reg)=> console.log('Service Worker registered.', reg))
+      .catch((err)=> console.log('Service Worker not registered.', err))
+
+      //listen for the latest sw
+      navigator.serviceWorker.addEventListener('controllerchange', async ()=>{
+        APP.sw = navigator.serviceWorker.controller;
+      })
+      // listen for messages from Service Worker
+      navigator.serviceWorker.addEventListener('message', APP.onMessage)
+  })
+}
+  }
 }
 
 document.addEventListener('DOMContentLoaded', APP.init);
