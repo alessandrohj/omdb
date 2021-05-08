@@ -50,8 +50,6 @@ self.addEventListener('install', (ev) => {
 });
 
 self.addEventListener('activate', (ev) => {
-  //activate event - browser now using this version
-  console.log('activated');
   // delete old versions of caches.
   ev.waitUntil(
       caches.keys()
@@ -65,16 +63,12 @@ self.addEventListener('activate', (ev) => {
           })
         )
       })
-      .then((empties) => {
-        console.log('Deleted successfully:', empties);
-      })
   )
     });
 
 self.addEventListener('fetch', (ev) => {
   //fetch event - web page is asking for an asset
 // check if resource exists in cache. If it exists, return it, if not fetch it from network
-console.log(ev);
   ev.respondWith(
     caches.match(ev.request)
     .then(response=>{
@@ -94,26 +88,3 @@ console.log(ev);
     })
   );
 });
-
-
-self.addEventListener('message', ({ data }) => {
-  console.log('Message received from page', data);
-});
-
-
-const sendMessage = async (msg) => {
-  //send a message from the service worker to the webpage(s)
-  let allClients = await clients.matchAll({ includeUncontrolled: true });
-  return Promise.all(
-    allClients.map((client) => {
-      let channel = new MessageChannel();
-      channel.port1.onmessage = onMessage;
-      if ('isOnline' in msg) {
-        console.log('tell the browser if online');
-      }
-      //port1 for send port2 for receive
-      return client.postMessage(msg, [channel.port2]);
-    })
-  );
-  
-};
