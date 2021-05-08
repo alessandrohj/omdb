@@ -1,29 +1,34 @@
 const APP = {
-    base_URL: 'http://www.omdbapi.com/?apikey=',
+    base_URL: 'http://www.omdbapi.com/?type=movie&apikey=',
     API_KEY: '898dd5ab',
     results: null,
     dbVersion: 1,
     db: null,
+    selected: null,
     counter: 0,
     dbStore: 'movies',
     dbStoreSelection: 'selected',
-    init () {
+    init: () => {
         APP.addListeners();
         APP.openDB();
     },
     addListeners () {
         document.getElementById('searchForm').addEventListener('submit', APP.search);
+
         if(document.querySelector('.btn-floating')){
             let addButton = document.querySelectorAll('.btn-floating');
             addButton.forEach(button=>{
               button.addEventListener('click', APP.select);
             })
-        }
+        };
         //navigation listeners
         document.getElementById('searchForm').addEventListener('submit', APP.nav);
         document.getElementById('goHome').addEventListener('click', APP.nav);
-        document.getElementById('goToSelection').addEventListener('click', APP.nav);
         document.getElementById('nav-title').addEventListener('click', APP.nav);
+        let selection = document.getElementById('goToSelection');
+        selection.addEventListener('click', APP.nav);
+        selection.addEventListener('click', APP.getSelectionFromIDB);
+
     },
     nav: (ev) =>{
         let btn = ev.target;
@@ -44,7 +49,7 @@ const APP = {
                   },
                   )}
      },
-     fetchData: (keyword)=>{
+   fetchData: (keyword)=>{
         let url = APP.base_URL + APP.API_KEY + `&s=${keyword}`;
         fetch(url)
         .then(response=>{
@@ -115,6 +120,24 @@ const APP = {
        
      }
     },
+    getSelectionFromIDB: ()=>{
+      let req = APP.db.transaction(APP.dbStoreSelection, 'readonly')
+      .objectStore(APP.dbStoreSelection)
+      .getAll();
+  
+    req.onsuccess = (ev) =>{
+      let results = req.result;
+      APP.selected = results.map(item=>{
+        return item.results;
+      })
+      APP.buildSelectionList(APP.selected);
+   }
+    
+    req.onerror = (err) =>{
+      console.log('not found');
+      console.warn(err);
+    }
+    },
     removeDataFromIDB: (key, dbStore)=>{
       let req = APP.db.transaction(dbStore, 'readwrite')
       .objectStore(dbStore)
@@ -139,12 +162,12 @@ const APP = {
                 }
                 return ` 
                 <div class="col s12 m6 l3">
-                  <div class="card hoverable movie" id='${obj.Title}'>
+                  <div class="card hoverable movie large" id='${obj.imdbID}'>
                     <div class="card-image">
                       <img class="responsive-img" alt="movie poster" src=${img}>
-                      <a class="btn-floating halfway-fab waves-effect waves-light red"><i class="material-icons" id="addButton">add</i></a>
                     </div>
                     <div class="card-content">
+                    <a class="btn-floating halfway-fab waves-effect waves-light red"><i class="material-icons" id="addButton">add</i></a>
                     <h5>${obj.Title}</h5>
                     <p>Released: ${obj.Year}</p>
                     </div>
@@ -152,7 +175,43 @@ const APP = {
               </div>`;
               })
               .join('\n');
-              APP.addListeners();
+          } else {
+            //no cards
+            container.innerHTML = `<div class="card hoverable">
+              <div class="card-content">
+                <h3 class="card-title activator"><span>No Content Available.</span></h3>
+              </div>
+            </div>`;
+          };
+          APP.addListeners();
+    },
+
+    buildSelectionList:(movies)=>{
+        //build the list of cards inside the current page
+        let container = document.querySelector('#selected');
+        container.innerHTML = '';
+          if (movies.length > 0) {
+            container.innerHTML = movies
+              .map((obj) => {
+                // let img = './img/icon-512x512.png';
+                if (obj.Poster != null) {
+                  img = obj.Poster;
+                }
+                return ` 
+                <div class="col s12 m6 l3">
+                  <div class="card hoverable movie large" id='${obj.imdbID}'>
+                    <div class="card-image">
+                      <img class="responsive-img" alt="movie poster" src=${img}>
+                    </div>
+                    <div class="card-content">
+                    <a class="btn-floating halfway-fab waves-effect waves-light red"><i class="material-icons" id="removeButton">remove</i></a>
+                    <h5>${obj.Title}</h5>
+                    <p>Released: ${obj.Year}</p>
+                    </div>
+                  </div>
+              </div>`;
+              })
+              .join('\n');
           } else {
             //no cards
             container.innerHTML = `<div class="card hoverable">
@@ -161,18 +220,25 @@ const APP = {
               </div>
             </div>`;
           }
+          APP.addListeners();
     },
     select: (ev)=>{
         let movie = ev.target;
         let selected = movie.closest('.movie').getAttribute('id');
-        const movieData = APP.results.find(element=> element = selected);
-        APP.addDataToIDB(movieData, selected, APP.dbStoreSelection);
+        const movieData = APP.results.find(element => element.imdbID === selected);
+        if(APP.counter >= 0 && APP.counter < 5){
+          APP.addDataToIDB(movieData, selected, APP.dbStoreSelection);
+          APP.showCounting();
+        }
+    },
+    remove: (ev)=>{
+      let movie = ev.target;
+      let selected = movie.closest('.movie').getAttribute('id');
+      const movieData = APP.selected.find(element=> element = selected);
+      APP.remove(movieData);
+      
         APP.showCounting();
-    },
-    remove: (item) =>{
-      // movie.innerHTML = 'add';
-      // APP.removeDataFromIDB(item, APP.dbStoreSelection);
-    },
+  },
     showCounting: ()=>{
       let req = APP.db.transaction(APP.dbStoreSelection, 'readwrite')
       .objectStore(APP.dbStoreSelection);
@@ -180,7 +246,10 @@ const APP = {
       countRequest.onsuccess = function() {
           APP.counter = countRequest.result;
            let moviesCounter = document.querySelector('#moviesCounter');
-          moviesCounter.textContent = APP.counter;
+          if(APP.counter >0) {
+            moviesCounter.textContent = APP.counter;
+          }
+    
         }
     }
 }

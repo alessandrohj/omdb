@@ -9,7 +9,6 @@
     color: black;
 }
 
-
 .page {
     position: absolute;
     transform: translateX(-200%);
@@ -22,8 +21,6 @@
   }
 
   #selection{
-      position: absolute;
-      top: 0;
       padding-left: 1rem;
       padding-top: 2rem;
   }
@@ -46,4 +43,15 @@
       cursor: pointer;
       font-size: 1.5rem;
       padding-right: 2rem;
+  }
+
+  .btn-floating{
+      position: fixed;
+      top: 57%;
+     right: 0;
+  }
+
+  #selected{
+      display: flex;
+      gap: 1rem;
   }
