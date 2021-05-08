@@ -15,12 +15,18 @@ const APP = {
     addListeners () {
         document.getElementById('searchForm').addEventListener('submit', APP.search);
 
-        if(document.querySelector('.btn-floating')){
-            let addButton = document.querySelectorAll('.btn-floating');
+        if(document.querySelector('.btn-floating.add')){
+            let addButton = document.querySelectorAll('.btn-floating.add');
             addButton.forEach(button=>{
               button.addEventListener('click', APP.select);
             })
         };
+        if(document.querySelector('.btn-floating.remove')){
+          let addButton = document.querySelectorAll('.btn-floating.remove');
+          addButton.forEach(button=>{
+            button.addEventListener('click', APP.remove);
+          })
+      };
         //navigation listeners
         document.getElementById('searchForm').addEventListener('submit', APP.nav);
         document.getElementById('goHome').addEventListener('click', APP.nav);
@@ -167,7 +173,7 @@ const APP = {
                       <img class="responsive-img" alt="movie poster" src=${img}>
                     </div>
                     <div class="card-content">
-                    <a class="btn-floating halfway-fab waves-effect waves-light red"><i class="material-icons" id="addButton">add</i></a>
+                    <a class="btn-floating add halfway-fab waves-effect waves-light red"><i class="material-icons" id="addButton">add</i></a>
                     <h5>${obj.Title}</h5>
                     <p>Released: ${obj.Year}</p>
                     </div>
@@ -204,7 +210,7 @@ const APP = {
                       <img class="responsive-img" alt="movie poster" src=${img}>
                     </div>
                     <div class="card-content">
-                    <a class="btn-floating halfway-fab waves-effect waves-light red"><i class="material-icons" id="removeButton">remove</i></a>
+                    <a class="btn-floating remove halfway-fab waves-effect waves-light red"><i class="material-icons" id="removeButton">remove</i></a>
                     <h5>${obj.Title}</h5>
                     <p>Released: ${obj.Year}</p>
                     </div>
@@ -233,11 +239,13 @@ const APP = {
     },
     remove: (ev)=>{
       let movie = ev.target;
-      let selected = movie.closest('.movie').getAttribute('id');
-      const movieData = APP.selected.find(element=> element = selected);
-      APP.remove(movieData);
-      
-        APP.showCounting();
+      let clicked = movie.closest('.movie').getAttribute('id');
+      console.log(clicked)
+      const movieData = APP.selected.filter(element=> {
+        return element.imdbID != clicked;
+      });
+      APP.selected = movieData;
+      APP.removeDataFromIDB(clicked, APP.dbStoreSelection);
   },
     showCounting: ()=>{
       let req = APP.db.transaction(APP.dbStoreSelection, 'readwrite')
