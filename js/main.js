@@ -17,19 +17,17 @@ const APP = {
     addListeners () {
         document.getElementById('searchForm').addEventListener('submit', APP.search);
 
-        if(document.querySelector('.btn-floating.add')){
-            let addButton = document.querySelectorAll('.btn-floating.add');
-            addButton.forEach(button=>{
-              button.addEventListener('click', APP.select);
-            })
-        };
-        if(document.querySelector('.btn-floating.remove')){
-          let addButton = document.querySelectorAll('.btn-floating.remove');
-          addButton.forEach(button=>{
-            button.addEventListener('click', APP.remove);
-          })
-      };
-
+      if(document.querySelector('.btn-floating')){
+        let clicked = document.querySelectorAll('.btn-floating');
+        clicked.forEach(button=>{
+          if(button.classList.contains('add')){
+          button.addEventListener('click', APP.select)
+        } else {
+          button.addEventListener('click', APP.remove);
+        }
+        })
+    };
+  
       let materialImages = document.querySelectorAll('.materialboxed');
       M.Materialbox.init(materialImages, {});
 
@@ -170,6 +168,10 @@ const APP = {
             let img = './img/No-Image.jpg';
             container.innerHTML = movies
               .map((obj) => {
+                if (movies.includes(APP.selected)){
+                  let newArr = movies.includes(APP.selected);
+                  console.log(newArr);
+                }
                 if (obj.Poster != "N/A") {
                   img = obj.Poster;
                 }
@@ -252,8 +254,8 @@ const APP = {
     },
     changeBtn: (btn)=>{
       let button = btn.closest('.halfway-fab');
-      let removeBtn;
-      if(button.getAttribute('id') === 'addButton'){
+      let removeBtn = button.nextElementSibling
+      if(button.classList.contains('add')){
         removeBtn = button.nextElementSibling;
         button.classList.add('hide');
         removeBtn.classList.remove('hide');
@@ -271,8 +273,10 @@ const APP = {
         return element.imdbID != clicked;
       });
       APP.selected = movieData;
-      APP.changeBtn(movie);
       APP.addListeners();
+      if(document.querySelector('#showResults').classList.contains('active')){
+        APP.changeBtn(movie);
+      }
       APP.removeDataFromIDB(clicked, APP.dbStoreSelection);
       APP.buildSelectionList(APP.selected);
   },
