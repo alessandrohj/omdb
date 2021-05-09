@@ -16,7 +16,7 @@ const APP = {
     },
     addListeners () {
         document.getElementById('searchForm').addEventListener('submit', APP.search);
-
+// FAB listener - add/remove movies from nominee list
       if(document.querySelector('.btn-floating')){
         let clicked = document.querySelectorAll('.btn-floating');
         clicked.forEach(button=>{
@@ -168,13 +168,9 @@ const APP = {
             let img = './img/No-Image.jpg';
             container.innerHTML = movies
               .map((obj) => {
-                if (movies.includes(APP.selected)){
-                  let newArr = movies.includes(APP.selected);
-                  console.log(newArr);
-                }
                 if (obj.Poster != "N/A") {
                   img = obj.Poster;
-                }
+                }     
                 return ` 
                 <div class="col s12 m4 l3">
                   <div class="card movie hoverable large light-blue lighten-5" id='${obj.imdbID}'>
@@ -200,8 +196,22 @@ const APP = {
             </div>`;
           };
           APP.addListeners();
+          APP.updateList();
     },
+    updateList: () => {
+      let cards = document.querySelectorAll('.card');
+      cards.forEach(item => {
+        APP.selected.map(element => {
+          let addButton = item.children[1].children[0];
+          let removeButton = item.children[1].children[1];
+          if (element.imdbID == item.getAttribute('id')){
+           addButton.classList.add('hide');
+           removeButton.classList.remove('hide');
+          } 
+        })
+      })
 
+    },
     buildSelectionList:(movies)=>{
         //build the list of cards inside the current page
         let container = document.querySelector('#selected');
@@ -214,7 +224,7 @@ const APP = {
                   img = obj.Poster;
                 }
                 return ` 
-                <div class="col s12 m6 l2">
+                <div class="col s12 m6 l3">
                   <div class="card hoverable movie large" id='${obj.imdbID}'>
                     <div class="card-image">
                       <img class="responsive-img materialboxed" alt="movie poster" src=${img}>
