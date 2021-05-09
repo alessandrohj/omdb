@@ -164,13 +164,13 @@ const APP = {
           if (movies.length > 0) {
             container.innerHTML = movies
               .map((obj) => {
-                // let img = './img/icon-512x512.png';
-                if (obj.Poster != null) {
+                let img = './img/No-Image.jpg';
+                if (obj.Poster != "N/A") {
                   img = obj.Poster;
                 }
                 return ` 
-                <div class="col s12 m6 l3">
-                  <div class="card hoverable movie large" id='${obj.imdbID}'>
+                <div class="col s12 m6 l3 xl2">
+                  <div class="card hoverable large" id='${obj.imdbID}'>
                     <div class="card-image">
                       <img class="responsive-img" alt="movie poster" src=${img}>
                     </div>
@@ -201,12 +201,12 @@ const APP = {
           if (movies.length > 0) {
             container.innerHTML = movies
               .map((obj) => {
-                // let img = './img/icon-512x512.png';
-                if (obj.Poster != null) {
+                let img = './img/No-Image.jpg';
+                if (obj.Poster != "N/A") {
                   img = obj.Poster;
                 }
                 return ` 
-                <div class="col s12 m6 l3">
+                <div class="col s12 m6 l2">
                   <div class="card hoverable movie large" id='${obj.imdbID}'>
                     <div class="card-image">
                       <img class="responsive-img" alt="movie poster" src=${img}>

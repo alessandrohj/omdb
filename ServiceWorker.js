@@ -10,10 +10,10 @@ let pageAssets = [
   './css/materialize.min.css',
   './js/main.js',
   './js/materialize.min.js',
+  './img/No-Image.jpg',
   'https://fonts.googleapis.com/icon?family=Material+Icons',
   'https://fonts.gstatic.com/s/materialicons/v78/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2'
 ];
-const offlinePage =   '404.html';
 let dynamicList = [];
 
 //cache limit function
@@ -81,10 +81,8 @@ self.addEventListener('fetch', (ev) => {
         })
       })
     })
-    .catch(() =>{
-      if(ev.request.url.indexOf('.html') > -1){
-        return caches.match(offlinePage);
-      }
+    .catch((err) =>{
+      console.warn(err);
     })
   );
 });
