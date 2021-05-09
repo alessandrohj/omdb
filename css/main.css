@@ -74,12 +74,21 @@ body{
     background-color: #59AAC0;
 }
 .card img{
-    min-height: 30vh;
+    min-height: 33vh;
 }
+
+.add{
+    color: #144E73;
+}
+
   .btn-floating{
       cursor: pointer;
       position: fixed;
-      top: 50%;
+      top: 57%;
+  }
+
+  .toast-container{
+      background-color: tomato;
   }
 
   #search-section{
@@ -91,7 +100,7 @@ body{
       gap: 1rem;
   }
 
-  .modal{
+  /* .modal{
       height: 20vh;
       max-height: 100%;
   }
@@ -99,4 +108,4 @@ body{
   .modal-footer{
       position: absolute;
       bottom: 0;
-  }
+  } */

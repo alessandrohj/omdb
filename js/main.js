@@ -11,6 +11,7 @@ const APP = {
     init: () => {
         APP.addListeners();
         APP.openDB();
+        //TODO - activate SW
         // APP.worker();
     },
     addListeners () {
@@ -83,6 +84,7 @@ const APP = {
         req.addEventListener('success', (ev) => {
         APP.db = ev.target.result;
         console.log('DB opened and upgraded as needed.', APP.db);
+        APP.getSelectionFromIDB();
         APP.showCounting();
      },
      req.addEventListener('upgradeneeded', (ev) => {
@@ -165,20 +167,21 @@ const APP = {
         //build the list of cards inside the current page
         let container = document.querySelector('#results');
           if (movies.length > 0) {
+            let img = './img/No-Image.jpg';
             container.innerHTML = movies
               .map((obj) => {
-                let img = './img/No-Image.jpg';
                 if (obj.Poster != "N/A") {
                   img = obj.Poster;
                 }
                 return ` 
-                <div class="col s12 m6 l3 xl2">
+                <div class="col s12 m4 l3">
                   <div class="card movie hoverable large light-blue lighten-5" id='${obj.imdbID}'>
                     <div class="card-image">
                       <img class="responsive-img materialboxed" alt="movie poster" src=${img}>
                     </div>
                     <div class="card-content">
-                    <a class="btn-floating add halfway-fab waves-effect waves-light red"><i class="material-icons" id="addButton">add</i></a>
+                    <a class="btn-floating add halfway-fab waves-effect waves-light" id='addButton'><i class="material-icons">add</i></a>
+                    <a class="btn-floating remove halfway-fab waves-effect waves-light red hide" id='removeButton'><i class="material-icons">remove</i></a>
                     <h5>${obj.Title}</h5>
                     <p>Released: ${obj.Year}</p>
                     </div>
@@ -239,15 +242,26 @@ const APP = {
         const movieData = APP.results.find(element => element.imdbID === selected);
         if(APP.counter >= 0 && APP.counter < 5){
           APP.addDataToIDB(movieData, selected, APP.dbStoreSelection);
-          APP.showCounting();
+          APP.changeBtn(movie);
         }
-        if(APP.counter = 5){
-          let modal = document.querySelector('.modal');
-          let instance = M.Modal.init(modal, {
-            opacity: 0.7
-          });
-          instance.open();
+        APP.showCounting();
+        //TODO
+        if(APP.counter == 5){
+          M.toast({html: 'You already nominated 5 movies!', classes: 'rounded'})
         }
+    },
+    changeBtn: (btn)=>{
+      let button = btn.closest('.halfway-fab');
+      let removeBtn;
+      if(button.getAttribute('id') === 'addButton'){
+        removeBtn = button.nextElementSibling;
+        button.classList.add('hide');
+        removeBtn.classList.remove('hide');
+      } else {
+        removeBtn = button.previousElementSibling;
+        button.classList.add('hide');
+        removeBtn.classList.remove('hide');
+      }
     },
     remove: (ev)=>{
       let movie = ev.target;
@@ -257,6 +271,8 @@ const APP = {
         return element.imdbID != clicked;
       });
       APP.selected = movieData;
+      APP.changeBtn(movie);
+      APP.addListeners();
       APP.removeDataFromIDB(clicked, APP.dbStoreSelection);
       APP.buildSelectionList(APP.selected);
   },
@@ -267,10 +283,9 @@ const APP = {
       countRequest.onsuccess = function() {
           APP.counter = countRequest.result;
            let moviesCounter = document.querySelector('#moviesCounter');
-          if(APP.counter >0) {
+          if(APP.counter > 0) {
             moviesCounter.textContent = APP.counter;
           }
-    
         }
     },
   worker: ()=>{
