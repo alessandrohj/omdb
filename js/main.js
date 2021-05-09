@@ -11,7 +11,7 @@ const APP = {
     init: () => {
         APP.addListeners();
         APP.openDB();
-        APP.worker();
+        // APP.worker();
     },
     addListeners () {
         document.getElementById('searchForm').addEventListener('submit', APP.search);
@@ -30,6 +30,7 @@ const APP = {
       };
         //navigation listeners
         document.getElementById('searchForm').addEventListener('submit', APP.nav);
+        document.getElementById('back').addEventListener('click', APP.nav);
         document.getElementById('goHome').addEventListener('click', APP.nav);
         document.getElementById('nav-title').addEventListener('click', APP.nav);
         let selection = document.getElementById('goToSelection');
@@ -40,7 +41,6 @@ const APP = {
     nav: (ev) =>{
         let btn = ev.target;
         let target = btn.getAttribute("data-target");
-        console.log("Navigate to", target);
         document.querySelector(".page.active").classList.remove("active");
         document.getElementById(target).classList.add("active");
     },
@@ -52,6 +52,8 @@ const APP = {
             console.log(keyword);
             if (keyword) {
                 APP.getDataFromIDB(APP.dbStore, key, ()=>{
+                  let container = document.querySelector('#results');
+                  container.innerHTML = '';
                     APP.buildList(APP.results);
                   },
                   )}
@@ -159,7 +161,6 @@ const APP = {
      buildList: (movies) => {
         //build the list of cards inside the current page
         let container = document.querySelector('#results');
-        container.innerHTML = '';
           if (movies.length > 0) {
             container.innerHTML = movies
               .map((obj) => {

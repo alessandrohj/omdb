@@ -16,16 +16,14 @@
           <span id="nav-title" data-target='home'>Shopify Challenge</span>
         </div>
       <ul id="nav-mobile" class="right">
-        <li><span id="goHome" data-target='home'>Home</span></li>
-        <li><span id="goToSelection" data-target="selection">Movies<p id="moviesCounter"></p></span></li>
+        <li><i class="material-icons" id="goHome" data-target='home'>home</i></li>
+        <li><i class="material-icons" id="goToSelection" data-target="selection">local_movies</i>
+          <p id="moviesCounter"></p></li>
       </ul>
     </div>
   </nav>
-<section id="home"  class="page active" >
-    <h1>Shopify Challenge</h1>
-    <p>Please search for movies and select the ones you would like to nominate.</p>
-    <p>You should select 5 movies.</p>
-        <div class="container searchBar">
+  <section id="search-section">
+     <div class="container searchBar">
             <div class="nav-wrapper z-depth-3 hoverable" id="searchBar">
               <form name="searchForm" id="searchForm" data-target="showResults">
                 <div class="input-field">
@@ -37,12 +35,20 @@
               </form>
             </div>
           </div>
+  </section>
+<section id="home"  class="page active" >
+    <h1>Shopify Challenge</h1>
+    <p>Please search for movies and select the ones you would like to nominate.</p>
+    <p>You should select 5 movies.</p>
     </section>
     <section id="showResults" class="page">
       <div id="results" class="row">
       </div>
     </section>
     <section id="selection" class="page">
+      <div id="back">
+        <i class="material-icons" data-target="showResults">arrow_back</i>
+      </div>
       <div id="selected" class="container">
       </div>
     </section>
