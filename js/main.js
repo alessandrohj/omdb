@@ -28,6 +28,10 @@ const APP = {
             button.addEventListener('click', APP.remove);
           })
       };
+
+      let materialImages = document.querySelectorAll('.materialboxed');
+      M.Materialbox.init(materialImages, {});
+
         //navigation listeners
         document.getElementById('searchForm').addEventListener('submit', APP.nav);
         document.getElementById('back').addEventListener('click', APP.nav);
@@ -36,7 +40,6 @@ const APP = {
         let selection = document.getElementById('goToSelection');
         selection.addEventListener('click', APP.nav);
         selection.addEventListener('click', APP.getSelectionFromIDB);
-
     },
     nav: (ev) =>{
         let btn = ev.target;
@@ -170,9 +173,9 @@ const APP = {
                 }
                 return ` 
                 <div class="col s12 m6 l3 xl2">
-                  <div class="card hoverable large" id='${obj.imdbID}'>
+                  <div class="card movie hoverable large light-blue lighten-5" id='${obj.imdbID}'>
                     <div class="card-image">
-                      <img class="responsive-img" alt="movie poster" src=${img}>
+                      <img class="responsive-img materialboxed" alt="movie poster" src=${img}>
                     </div>
                     <div class="card-content">
                     <a class="btn-floating add halfway-fab waves-effect waves-light red"><i class="material-icons" id="addButton">add</i></a>
@@ -209,7 +212,7 @@ const APP = {
                 <div class="col s12 m6 l2">
                   <div class="card hoverable movie large" id='${obj.imdbID}'>
                     <div class="card-image">
-                      <img class="responsive-img" alt="movie poster" src=${img}>
+                      <img class="responsive-img materialboxed" alt="movie poster" src=${img}>
                     </div>
                     <div class="card-content">
                     <a class="btn-floating remove halfway-fab waves-effect waves-light red"><i class="material-icons" id="removeButton">remove</i></a>
@@ -237,6 +240,13 @@ const APP = {
         if(APP.counter >= 0 && APP.counter < 5){
           APP.addDataToIDB(movieData, selected, APP.dbStoreSelection);
           APP.showCounting();
+        }
+        if(APP.counter = 5){
+          let modal = document.querySelector('.modal');
+          let instance = M.Modal.init(modal, {
+            opacity: 0.7
+          });
+          instance.open();
         }
     },
     remove: (ev)=>{

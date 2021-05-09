@@ -1,5 +1,5 @@
-.btn-floating{
-    cursor: pointer;
+body{
+    background-color: #F2E3D5;
 }
 #moviesCounter{
     position: absolute;
@@ -14,43 +14,54 @@
     transform: translateX(-200%);
   }
 
-  .page.active {
+.page.active {
     padding: 1rem;
     opacity: 1;
     transform: translateX(0);
     animation: fadeIn 0.4s ease-in;
   }
 
-  #selection{
+ #selection{
       padding-left: 1rem;
       padding-top: 2rem;
   }
 
-  @keyframes fadeIn {
+@keyframes fadeIn {
     from {
       opacity: 0;
     }
     to {
     opacity: 1;
     }
-  }
+}
 
-  #goToSelection,
-  #goHome,
-  #nav-title{
+#goToSelection,
+#goHome,
+#nav-title{
       cursor: pointer;
       font-size: 1.5rem;
       padding-left: 1rem;
-  }
-  #goToSelection,
-  #goHome{
+}
+
+#goToSelection,
+#goHome{
       font-size: 3rem;
-  }
- #nav-mobile{
+}
+#nav-top{
+    background-color: #144E73;
+}
+
+#nav-mobile{
      display: flex;
      gap: 3rem;
      padding-right: 1rem;
- }
+}
+#moviesCounter{
+    color: white;
+}
+#searchBar{
+    background-color: #f5f1ed;
+}
 #back{
     font-size: 1.7rem;
     cursor: pointer;
@@ -59,16 +70,33 @@
     font-size: 2rem;
     font-weight: bold;
 }
+.card{
+    background-color: #59AAC0;
+}
+.card img{
+    min-height: 30vh;
+}
   .btn-floating{
+      cursor: pointer;
       position: fixed;
-      top: 57%;
-     right: 0;
+      top: 50%;
   }
 
   #search-section{
       padding-top: 2rem;
+      text-align: center;
   }
   #selected{
       display: flex;
       gap: 1rem;
+  }
+
+  .modal{
+      height: 20vh;
+      max-height: 100%;
+  }
+
+  .modal-footer{
+      position: absolute;
+      bottom: 0;
   }

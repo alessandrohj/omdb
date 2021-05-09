@@ -7,11 +7,11 @@
     <link rel="stylesheet" href="./css/main.css">
     <link rel="stylesheet" href="./css/materialize.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <title>Shopify Challenge</title>
+    <title>Nominate a Movie</title>
 </head>
 <body>
   <nav>
-    <div class="nav-wrapper">
+    <div class="nav-wrapper" id="nav-top">
         <div class="left">
           <span id="nav-title" data-target='home'>Shopify Challenge</span>
         </div>
@@ -23,6 +23,7 @@
     </div>
   </nav>
   <section id="search-section">
+    <h5>Search movies</h5>
      <div class="container searchBar">
             <div class="nav-wrapper z-depth-3 hoverable" id="searchBar">
               <form name="searchForm" id="searchForm" data-target="showResults">
@@ -49,9 +50,17 @@
       <div id="back">
         <i class="material-icons" data-target="showResults">arrow_back</i>
       </div>
-      <div id="selected" class="container">
+      <div id="selected" class="row">
       </div>
     </section>
+    <div id="modal1" class="modal">
+      <div class="modal-content">
+      <h4>You already nominated 5 movies.</h4>
+      </div>
+      <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+      </div>
+    </div>
 </body>
 <script src="./js/main.js"></script>
 <script src="./js/materialize.min.js"></script>
