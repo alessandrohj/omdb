@@ -12,8 +12,7 @@ const APP = {
     init: () => {
         APP.addListeners();
         APP.openDB();
-        //TODO - activate SW
-        // APP.worker();
+        APP.worker();
     },
     addListeners () {
         document.getElementById('searchForm').addEventListener('submit', APP.search);
