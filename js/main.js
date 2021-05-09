@@ -4,6 +4,7 @@ const APP = {
     results: null,
     dbVersion: 1,
     db: null,
+    sw: null,
     selected: null,
     counter: 0,
     dbStore: 'movies',
@@ -31,6 +32,11 @@ const APP = {
       let materialImages = document.querySelectorAll('.materialboxed');
       M.Materialbox.init(materialImages, {});
 
+      document.getElementById('closeSearchBtn').addEventListener('click', ()=>{
+        let search = document.getElementById('searchForm');
+        search.reset();
+      })
+
         //navigation listeners
         document.getElementById('searchForm').addEventListener('submit', APP.nav);
         document.getElementById('back').addEventListener('click', APP.nav);
@@ -51,11 +57,11 @@ const APP = {
             let searchInput = document.getElementById('search');
             let keyword = searchInput.value.trim();
             let key = keyword.toLowerCase();
-            console.log(keyword);
             if (keyword) {
                 APP.getDataFromIDB(APP.dbStore, key, ()=>{
                   let container = document.querySelector('#results');
                   container.innerHTML = '';
+                  document.querySelector('.pre-content').classList.add('hide');
                     APP.buildList(APP.results);
                   },
                   )}
@@ -81,7 +87,6 @@ const APP = {
         let req = window.indexedDB.open('shopify-challenge', APP.dbVersion);
         req.addEventListener('success', (ev) => {
         APP.db = ev.target.result;
-        console.log('DB opened and upgraded as needed.', APP.db);
         APP.getSelectionFromIDB();
         APP.showCounting();
      },
@@ -103,12 +108,10 @@ const APP = {
         .put({results: payload, keyword: key}, key);
        
          req.onsuccess = (ev) =>{
-           console.log('Object added to store')
          }
        
          req.onerror = (err) =>{
            console.warn(err);
-           console.log('Object already exists')
          }
      },
      getDataFromIDB: (DBStore, key, cb) => {
@@ -118,7 +121,6 @@ const APP = {
      
        req.onsuccess = (ev) =>{
          if(req.result) {
-             console.log(req.result['results'].Search);
              APP.results = req.result['results'].Search;
            cb(APP.results);
        } else {
@@ -126,7 +128,6 @@ const APP = {
        }
        
        req.onerror = (err) =>{
-         console.log('not found');
          console.warn(err);
        }
        
@@ -156,7 +157,6 @@ const APP = {
       .delete(key);
 
       req.onsuccess = ()=>{
-        console.log(`${req} deleted`);
         APP.showCounting();
       }
 
@@ -172,7 +172,7 @@ const APP = {
                   img = obj.Poster;
                 }     
                 return ` 
-                <div class="col s12 m4 l3">
+                <div class="col s12 m6 l3">
                   <div class="card movie hoverable large light-blue lighten-5" id='${obj.imdbID}'>
                     <div class="card-image">
                       <img class="responsive-img materialboxed" alt="movie poster" src=${img}>
@@ -225,7 +225,7 @@ const APP = {
                 }
                 return ` 
                 <div class="col s12 m6 l3">
-                  <div class="card hoverable movie large" id='${obj.imdbID}'>
+                  <div class="card hoverable movie light-blue lighten-5 large" id='${obj.imdbID}'>
                     <div class="card-image">
                       <img class="responsive-img materialboxed" alt="movie poster" src=${img}>
                     </div>
@@ -240,11 +240,8 @@ const APP = {
               .join('\n');
           } else {
             //no cards
-            container.innerHTML = `<div class="card hoverable">
-              <div class="card-content">
-                <h3 class="card-title activator"><span>No Content Available.</span></h3>
-              </div>
-            </div>`;
+            container.innerHTML = `
+                <h3>No movie selected.</h3>`;
           }
           APP.addListeners();
     },
@@ -257,10 +254,6 @@ const APP = {
           APP.changeBtn(movie);
         }
         APP.showCounting();
-        //TODO
-        if(APP.counter == 5){
-          M.toast({html: 'You already nominated 5 movies!', classes: 'rounded'})
-        }
     },
     changeBtn: (btn)=>{
       let button = btn.closest('.halfway-fab');
@@ -278,7 +271,6 @@ const APP = {
     remove: (ev)=>{
       let movie = ev.target;
       let clicked = movie.closest('.movie').getAttribute('id');
-      console.log(clicked)
       const movieData = APP.selected.filter(element=> {
         return element.imdbID != clicked;
       });
@@ -299,6 +291,11 @@ const APP = {
            let moviesCounter = document.querySelector('#moviesCounter');
           if(APP.counter > 0) {
             moviesCounter.textContent = APP.counter;
+          } else {
+            moviesCounter.textContent = '';
+          }
+          if(APP.counter === 5){
+            M.toast({html: 'You already nominated 5 movies!', classes: 'rounded'})
           }
         }
     },
@@ -316,8 +313,6 @@ const APP = {
       navigator.serviceWorker.addEventListener('controllerchange', async ()=>{
         APP.sw = navigator.serviceWorker.controller;
       })
-      // listen for messages from Service Worker
-      navigator.serviceWorker.addEventListener('message', APP.onMessage)
   })
 }
   }

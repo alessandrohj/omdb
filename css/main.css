@@ -1,3 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+* {
+    font-family: 'Roboto', Helvetica, sans-serif;
+}
+
 body{
     background-color: #F2E3D5;
 }
@@ -53,27 +59,26 @@ body{
 
 #nav-mobile{
      display: flex;
-     gap: 3rem;
+     gap: 2.2rem;
      padding-right: 1rem;
 }
 #moviesCounter{
+    font-size: 1.3rem;
     color: white;
 }
 #searchBar{
     background-color: #f5f1ed;
 }
-#back{
-    font-size: 1.7rem;
+
+#back i{
+    font-size: 3rem;
     cursor: pointer;
 }
 #arrow_back{
-    font-size: 2rem;
+    font-size: 3rem;
     font-weight: bold;
 }
-.card{
-    background-color: #59AAC0;
-}
-.card img{
+img{
     min-height: 33vh;
 }
 
@@ -87,9 +92,6 @@ body{
       top: 57%;
   }
 
-  .toast-container{
-      background-color: tomato;
-  }
 
   #search-section{
       padding-top: 2rem;
@@ -100,12 +102,6 @@ body{
       gap: 1rem;
   }
 
-  /* .modal{
-      height: 20vh;
-      max-height: 100%;
+  #selection .card {
+      min-width: 100%;
   }
-
-  .modal-footer{
-      position: absolute;
-      bottom: 0;
-  } */
